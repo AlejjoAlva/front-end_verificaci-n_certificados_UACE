@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificación de Certificado - UACE</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f5f7;
+            color: #172b4d;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #091e42;
+        }
+
+        p {
+            color: #42526e;
+            margin-bottom: 25px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        #hashInput {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #dfe1e6;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+
+        #hashInput:focus {
+            outline: none;
+            border-color: #4c9aff;
+        }
+
+        button {
+            padding: 12px 20px;
+            background-color: #0052cc;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #0065ff;
+        }
+
+        #resultadosDiv {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 4px;
+            text-align: left;
+            line-height: 1.6;
+            display: none; /* Oculto por defecto */
+        }
+        
+        #resultadosDiv.success {
+            background-color: #e3fcef;
+            border-left: 5px solid #00875a;
+            display: block;
+        }
+
+        #resultadosDiv.error {
+            background-color: #ffebe6;
+            border-left: 5px solid #de350b;
+            text-align: center;
+            display: block;
+        }
+        
+        #resultadosDiv.loading {
+            text-align: center;
+            display: block;
+            border: none;
+            background: none;
+        }
+
+        #resultadosDiv h3 {
+            margin-top: 0;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #0052cc;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Verificación de Certificado UACE</h2>
+        <p>Por favor, ingrese el código hash de verificación que se encuentra en el certificado para comprobar su autenticidad.</p>
+        
+        <div class="input-group">
+            <input type="text" id="hashInput" placeholder="Pegue el código hash aquí...">
+            <button onclick="verificarCertificado()">Verificar</button>
+        </div>
+
+        <div id="resultadosDiv">
+            </div>
+    </div>
+
+    <script>
+        async function verificarCertificado() {
+            const hash = document.getElementById('hashInput').value.trim();
+            const resultadosDiv = document.getElementById('resultadosDiv');
+
+            // Limpiar resultados anteriores y mostrar spinner
+            resultadosDiv.className = 'loading';
+            resultadosDiv.innerHTML = '<div class="spinner"></div>';
+            
+            if (!hash) {
+                resultadosDiv.className = 'error';
+                resultadosDiv.innerHTML = '<h3>Por favor, ingrese un código hash.</h3>';
+                return;
+            }
+
+            // ===================================================================
+            // == IMPORTANTE: REEMPLAZA ESTA URL CON LA URL DE TU WEBHOOK DE N8N ==
+            // ===================================================================
+            const webhookURL = 'https://[AQUÍ_VA_LA_URL_DE_TU_WEBHOOK_DE_PRODUCCION_EN_N8N]';
+            // ===================================================================
+            
+            const fullURL = `${webhookURL}?hash=${encodeURIComponent(hash)}`;
+
+            try {
+                const response = await fetch(fullURL);
+                if (!response.ok) {
+                    throw new Error('Error en la respuesta del servidor.');
+                }
+                const data = await response.json();
+
+                if (data.status === 'valido') {
+                    resultadosDiv.className = 'success';
+                    resultadosDiv.innerHTML = `
+                        <h3>✅ Certificado Válido</h3>
+                        <p><strong>Nombre:</strong> ${data.info.nombreCompleto}</p>
+                        <p><strong>Curso:</strong> ${data.info.nombreCurso}</p>
+                        <p><strong>Fecha de Emisión:</strong> ${new Date(data.info.fechaEmision).toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                    `;
+                } else {
+                    resultadosDiv.className = 'error';
+                    resultadosDiv.innerHTML = `<h3>❌ Certificado no encontrado o inválido.</h3><p>Verifique el código e intente de nuevo.</p>`;
+                }
+            } catch (error) {
+                console.error('Error en la verificación:', error);
+                resultadosDiv.className = 'error';
+                resultadosDiv.innerHTML = `<h3>Ocurrió un error de conexión.</h3><p>Por favor, revise su conexión a internet e intente más tarde.</p>`;
+            }
+        }
+    </script>
+
+</body>
+</html>
