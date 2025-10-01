@@ -139,7 +139,8 @@
         </div>
 
         <div id="resultadosDiv">
-            </div>
+            <!-- El resultado de la verificación aparecerá aquí -->
+        </div>
     </div>
 
     <script>
@@ -147,7 +148,7 @@
             const hash = document.getElementById('hashInput').value.trim();
             const resultadosDiv = document.getElementById('resultadosDiv');
 
-            // Limpiar resultados anteriores y mostrar spinner
+            // 1. Mostrar el spinner de carga y limpiar resultados anteriores.
             resultadosDiv.className = 'loading';
             resultadosDiv.innerHTML = '<div class="spinner"></div>';
             
@@ -158,21 +159,28 @@
             }
 
             // ===================================================================
-            // == IMPORTANTE: REEMPLAZA ESTA URL CON LA URL DE TU WEBHOOK DE N8N ==
+            // == IMPORTANTE: AQUÍ DEBE IR LA URL DE PRODUCCIÓN DE TU WEBHOOK N8N ==
             // ===================================================================
             const webhookURL = 'https://n8n-uace.app.n8n.cloud/webhook/73bd1d22-da12-486f-806e-e6f79842fb40';
             // ===================================================================
             
+            // 2. Construir la URL completa, añadiendo el hash como un parámetro de búsqueda.
             const fullURL = `${webhookURL}?hash=${encodeURIComponent(hash)}`;
 
             try {
+                // 3. Enviar la petición al webhook de n8n y esperar la respuesta.
                 const response = await fetch(fullURL);
                 if (!response.ok) {
+                    // Si el servidor responde con un error (ej. 404, 500), se lanza una excepción.
                     throw new Error('Error en la respuesta del servidor.');
                 }
+                
+                // 4. Convertir la respuesta a formato JSON.
                 const data = await response.json();
 
+                // 5. Revisar el campo "status" de la respuesta JSON que envió n8n.
                 if (data.status === 'valido') {
+                    // Si el status es "valido", mostrar la caja de éxito con los datos.
                     resultadosDiv.className = 'success';
                     resultadosDiv.innerHTML = `
                         <h3>✅ Certificado Válido</h3>
@@ -181,10 +189,12 @@
                         <p><strong>Fecha de Emisión:</strong> ${new Date(data.info.fechaEmision).toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
                     `;
                 } else {
+                    // Si el status es cualquier otra cosa (ej. "invalido"), mostrar la caja de error.
                     resultadosDiv.className = 'error';
                     resultadosDiv.innerHTML = `<h3>❌ Certificado no encontrado o inválido.</h3><p>Verifique el código e intente de nuevo.</p>`;
                 }
             } catch (error) {
+                // 6. Si la llamada 'fetch' falla por completo (ej. no hay internet), mostrar un error de conexión.
                 console.error('Error en la verificación:', error);
                 resultadosDiv.className = 'error';
                 resultadosDiv.innerHTML = `<h3>Ocurrió un error de conexión.</h3><p>Por favor, revise su conexión a internet e intente más tarde.</p>`;
@@ -194,3 +204,4 @@
 
 </body>
 </html>
+
