@@ -215,11 +215,6 @@
         </div>
 
         <div class="footer">
-            <!-- =================================================================== */
-            /* == NOTA SOBRE IMÁGENES                                         == */
-            /* Sube los logos a una carpeta 'assets' en GitHub y reemplaza   */
-            /* las rutas. Ejemplo: 'assets/logo-uace.png'                   */
-            /* =================================================================== */
             <img src="logo_fce_alta_azul.png" alt="Logo FCE">
             <img src="logo_unal.png" alt="Logo UNAL">
             <img src="logo_uace.png" alt="Logo UACE">
@@ -270,8 +265,14 @@
                         `;
                     } else {
                         // Si n8n nos dice que el certificado NO es válido (status: "invalido").
+                        // ===================================================================
+                        // == INICIO DE CAMBIO DE MENSAJE DE ERROR "NO ENCONTRADO"        ==
+                        // ===================================================================
                         resultadosDiv.className = 'error';
                         resultadosDiv.innerHTML = `<h3>❌ Verificación Fallida</h3><p>El código ingresado no coincide con ningún certificado emitido y validado en nuestra base de datos. Por favor, verifique el código e intente de nuevo.</p>`;
+                        // ===================================================================
+                        // == FIN DE CAMBIO DE MENSAJE DE ERROR                           ==
+                        // ===================================================================
                     }
                 } else {
                     // Si el servidor responde pero con un error (ej. 404, 500), el workflow puede estar fallando.
@@ -280,10 +281,10 @@
             } catch (error) {
                 // Si la llamada 'fetch' falla por completo (ej. no hay internet o CORS).
                 console.error('Error en la verificación:', error);
+                // ===================================================================
+                // == INICIO DE CAMBIO DE MENSAJE DE ERROR "FALLA DE CONEXIÓN"     ==
+                // ===================================================================
                 resultadosDiv.className = 'error';
-                // ===================================================================
-                // == INICIO DE CAMBIO DE MENSAJE DE ERROR                      ==
-                // ===================================================================
                 resultadosDiv.innerHTML = `<h3>Error en la Verificación</h3><p>No se pudo completar la consulta en este momento. Esto puede deberse a un problema de conexión o a un error temporal del servidor. Por favor, intente de nuevo en unos momentos.</p>`;
                 // ===================================================================
                 // == FIN DE CAMBIO DE MENSAJE DE ERROR                         ==
