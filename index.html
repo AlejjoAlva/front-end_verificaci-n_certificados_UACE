@@ -1,3 +1,4 @@
+```html:Página de Verificación de Certificados UACE v2.0:index.html
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -5,12 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verificación de Certificado - UACE</title>
     <style>
+        /* Importamos la fuente 'Inter' desde Google Fonts */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
 
+        /* Estilos generales del cuerpo de la página */
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f4f5f7;
-            color: #172b4d;
+            background-color: #F0F2F5; /* Un gris muy claro para el fondo */
+            color: #333;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -20,24 +23,42 @@
             box-sizing: border-box;
         }
 
+        /* Contenedor principal centrado */
         .container {
             background-color: #ffffff;
             padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
             width: 100%;
-            max-width: 500px;
+            max-width: 550px;
             text-align: center;
+            border-top: 5px solid #002D40; /* Borde superior con el color principal de la UACE */
         }
 
+        /* Estilos para el encabezado con los logos */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .header img {
+            max-height: 50px;
+        }
+
+        /* Estilos para los textos y botones */
         h2 {
             margin-top: 0;
-            color: #091e42;
+            color: #002D40; /* Color principal oscuro */
+            font-size: 1.5em;
         }
 
         p {
-            color: #42526e;
-            margin-bottom: 25px;
+            color: #555;
+            margin-bottom: 30px;
         }
 
         .input-group {
@@ -48,53 +69,55 @@
 
         #hashInput {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #dfe1e6;
-            border-radius: 4px;
+            padding: 14px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
             font-size: 16px;
             box-sizing: border-box;
-            transition: border-color 0.2s;
+            transition: border-color 0.3s, box-shadow 0.3s;
         }
 
         #hashInput:focus {
             outline: none;
-            border-color: #4c9aff;
+            border-color: #004A66;
+            box-shadow: 0 0 0 3px rgba(0, 74, 102, 0.2);
         }
 
         button {
-            padding: 12px 20px;
-            background-color: #0052cc;
+            padding: 14px 20px;
+            background-color: #004A66; /* Color azul oscuro del certificado */
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 8px;
             font-size: 16px;
             font-weight: 500;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: background-color 0.3s;
         }
 
         button:hover {
-            background-color: #0065ff;
+            background-color: #002D40;
         }
-
+        
+        /* Estilos para el contenedor de resultados */
         #resultadosDiv {
             margin-top: 30px;
-            padding: 20px;
-            border-radius: 4px;
+            padding: 25px;
+            border-radius: 8px;
             text-align: left;
-            line-height: 1.6;
-            display: none; /* Oculto por defecto */
+            line-height: 1.7;
+            display: none;
         }
         
         #resultadosDiv.success {
-            background-color: #e3fcef;
-            border-left: 5px solid #00875a;
+            background-color: #F0FAF6;
+            border-left: 5px solid #00875A;
             display: block;
         }
 
         #resultadosDiv.error {
-            background-color: #ffebe6;
-            border-left: 5px solid #de350b;
+            background-color: #FFF4F2;
+            border-left: 5px solid #DE350B;
             text-align: center;
             display: block;
         }
@@ -102,17 +125,23 @@
         #resultadosDiv.loading {
             text-align: center;
             display: block;
-            border: none;
-            background: none;
         }
 
         #resultadosDiv h3 {
             margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         
+        .resultado-item {
+            margin-bottom: 8px;
+        }
+        
+        /* Estilos para el ícono de carga (spinner) */
         .spinner {
             border: 4px solid #f3f3f3;
-            border-top: 4px solid #0052cc;
+            border-top: 4px solid #004A66;
             border-radius: 50%;
             width: 30px;
             height: 30px;
@@ -124,23 +153,26 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h2>Verificación de Certificado UACE</h2>
-        <p>Por favor, ingrese el código hash de verificación que se encuentra en el certificado para comprobar su autenticidad.</p>
+        <div class="header">
+            <img src="https://media.licdn.com/dms/image/D4E0BAQGv3L2y6zH9NQ/company-logo_200_200/0/1693233827170/uace_unal_logo?e=1733539200&v=beta&t=Hh1P8_Dlk4h52o_BwVnC3Zf78_D-L48uYj-e7iW_d-I" alt="Logo UACE">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/UNAL_Logosimbolo.svg/1200px-UNAL_Logosimbolo.svg.png" alt="Logo UNAL">
+        </div>
+
+        <h2>Sistema de Verificación de Certificados</h2>
+        <p>Ingrese el código de verificación único (hash) que se encuentra en el documento para confirmar su autenticidad y los datos asociados.</p>
         
         <div class="input-group">
-            <input type="text" id="hashInput" placeholder="Pegue el código hash aquí...">
-            <button onclick="verificarCertificado()">Verificar</button>
+            <input type="text" id="hashInput" placeholder="Pegue el código de verificación aquí...">
+            <button onclick="verificarCertificado()">Verificar Autenticidad</button>
         </div>
 
         <div id="resultadosDiv">
-            <!-- El resultado de la verificación aparecerá aquí -->
-        </div>
+            </div>
     </div>
 
     <script>
@@ -154,7 +186,7 @@
             
             if (!hash) {
                 resultadosDiv.className = 'error';
-                resultadosDiv.innerHTML = '<h3>Por favor, ingrese un código hash.</h3>';
+                resultadosDiv.innerHTML = '<h3>Por favor, ingrese un código de verificación.</h3>';
                 return;
             }
 
@@ -164,44 +196,47 @@
             const webhookURL = 'https://n8n-uace.app.n8n.cloud/webhook/73bd1d22-da12-486f-806e-e6f79842fb40';
             // ===================================================================
             
-            // 2. Construir la URL completa, añadiendo el hash como un parámetro de búsqueda.
+            // 2. Construir la URL completa para la petición.
             const fullURL = `${webhookURL}?hash=${encodeURIComponent(hash)}`;
 
             try {
-                // 3. Enviar la petición al webhook de n8n y esperar la respuesta.
+                // 3. Enviar la petición al webhook de n8n.
                 const response = await fetch(fullURL);
                 if (!response.ok) {
-                    // Si el servidor responde con un error (ej. 404, 500), se lanza una excepción.
                     throw new Error('Error en la respuesta del servidor.');
                 }
                 
                 // 4. Convertir la respuesta a formato JSON.
                 const data = await response.json();
 
-                // 5. Revisar el campo "status" de la respuesta JSON que envió n8n.
+                // 5. Revisar el campo "status" que envía n8n.
                 if (data.status === 'valido') {
-                    // Si el status es "valido", mostrar la caja de éxito con los datos.
+                    // Si el certificado es válido, se construye el HTML con toda la información.
                     resultadosDiv.className = 'success';
                     resultadosDiv.innerHTML = `
-                        <h3>✅ Certificado Válido</h3>
-                        <p><strong>Nombre:</strong> ${data.info.nombreCompleto}</p>
-                        <p><strong>Curso:</strong> ${data.info.nombreCurso}</p>
-                        <p><strong>Fecha de Emisión:</strong> ${new Date(data.info.fechaEmision).toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                        <h3>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: #00875A;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="currentColor"></path></svg>
+                            Certificado Válido y Verificado
+                        </h3>
+                        <p class="resultado-item"><strong>Estudiante:</strong> ${data.info.nombreCompleto}</p>
+                        <p class="resultado-item"><strong>Documento:</strong> ${data.info.documentoID}</p>
+                        <p class="resultado-item"><strong>Programa Académico:</strong> ${data.info.programa}</p>
+                        <p class="resultado-item"><strong>Curso Aprobado:</strong> ${data.info.nombreCurso}</p>
+                        <p class="resultado-item"><strong>Fecha de Emisión:</strong> ${new Date(data.info.fechaEmision).toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
                     `;
                 } else {
-                    // Si el status es cualquier otra cosa (ej. "invalido"), mostrar la caja de error.
+                    // Si el status es "invalido", se muestra el mensaje de error.
                     resultadosDiv.className = 'error';
-                    resultadosDiv.innerHTML = `<h3>❌ Certificado no encontrado o inválido.</h3><p>Verifique el código e intente de nuevo.</p>`;
+                    resultadosDiv.innerHTML = `<h3>❌ Certificado No Encontrado</h3><p>El código de verificación no coincide con ningún registro en nuestra base de datos. Por favor, verifíquelo e intente de nuevo.</p>`;
                 }
             } catch (error) {
-                // 6. Si la llamada 'fetch' falla por completo (ej. no hay internet), mostrar un error de conexión.
+                // 6. Si la conexión falla, se muestra un error genérico.
                 console.error('Error en la verificación:', error);
                 resultadosDiv.className = 'error';
-                resultadosDiv.innerHTML = `<h3>Ocurrió un error de conexión.</h3><p>Por favor, revise su conexión a internet e intente más tarde.</p>`;
+                resultadosDiv.innerHTML = `<h3>Ocurrió un error de conexión</h3><p>No se pudo establecer comunicación con el servidor de verificación. Por favor, revise su conexión a internet e intente más tarde.</p>`;
             }
         }
     </script>
 
 </body>
 </html>
-
