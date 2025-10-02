@@ -1,19 +1,18 @@
-```html:Página de Verificación de Certificados UACE v2.0:index.html
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verificación de Certificado - UACE</title>
+    <title>Sistema de Verificación de Certificados - UACE</title>
     <style>
-        /* Importamos la fuente 'Inter' desde Google Fonts */
+        /* Importamos la fuente 'Inter' para consistencia profesional */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
 
-        /* Estilos generales del cuerpo de la página */
+        /* Estilos generales */
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #F0F2F5; /* Un gris muy claro para el fondo */
-            color: #333;
+            background-color: #E9EEF2; /* Un fondo gris azulado muy sutil */
+            color: #172B4D;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -21,46 +20,47 @@
             margin: 0;
             padding: 20px;
             box-sizing: border-box;
+            /* Opcional: Imagen de fondo con figuras geométricas sutiles */
+            /* background-image: url('URL_A_TU_IMAGEN_DE_FONDO.svg'); 
+            background-size: cover;
+            */
         }
 
-        /* Contenedor principal centrado */
+        /* Contenedor principal */
         .container {
             background-color: #ffffff;
             padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            border-radius: 16px;
+            box-shadow: 0 15px 30px rgba(0, 45, 64, 0.1);
             width: 100%;
-            max-width: 550px;
+            max-width: 600px;
             text-align: center;
-            border-top: 5px solid #002D40; /* Borde superior con el color principal de la UACE */
+            border-top: 6px solid #004A66; /* Acento de color principal */
+            position: relative;
+            overflow: hidden;
         }
-
-        /* Estilos para el encabezado con los logos */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .header img {
-            max-height: 50px;
-        }
-
-        /* Estilos para los textos y botones */
-        h2 {
-            margin-top: 0;
-            color: #002D40; /* Color principal oscuro */
-            font-size: 1.5em;
-        }
-
-        p {
-            color: #555;
+        
+        /* Encabezado del contenedor */
+        .header-image {
+            width: 100%;
             margin-bottom: 30px;
         }
 
+        /* Títulos y textos */
+        h2 {
+            margin-top: 0;
+            color: #002D40;
+            font-size: 26px;
+        }
+
+        p.subtitle {
+            color: #5E6C84;
+            margin-bottom: 30px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        
+        /* Grupo de entrada de texto y botón */
         .input-group {
             display: flex;
             flex-direction: column;
@@ -69,37 +69,41 @@
 
         #hashInput {
             width: 100%;
-            padding: 14px;
-            border: 1px solid #ccc;
+            padding: 15px;
+            border: 1px solid #DFE1E6;
             border-radius: 8px;
             font-size: 16px;
             box-sizing: border-box;
-            transition: border-color 0.3s, box-shadow 0.3s;
+            transition: all 0.2s ease-in-out;
+            text-align: center;
+            font-family: monospace; /* Ideal para hashes */
         }
 
         #hashInput:focus {
             outline: none;
-            border-color: #004A66;
-            box-shadow: 0 0 0 3px rgba(0, 74, 102, 0.2);
+            border-color: #0052CC;
+            box-shadow: 0 0 0 4px rgba(0, 82, 204, 0.2);
         }
 
         button {
-            padding: 14px 20px;
-            background-color: #004A66; /* Color azul oscuro del certificado */
+            padding: 15px 20px;
+            background: linear-gradient(135deg, #0052CC, #004A66);
             color: white;
             border: none;
             border-radius: 8px;
             font-size: 16px;
-            font-weight: 500;
+            font-weight: 700;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(0, 82, 204, 0.2);
         }
 
         button:hover {
-            background-color: #002D40;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 82, 204, 0.3);
         }
         
-        /* Estilos para el contenedor de resultados */
+        /* Contenedor de resultados */
         #resultadosDiv {
             margin-top: 30px;
             padding: 25px;
@@ -111,13 +115,13 @@
         
         #resultadosDiv.success {
             background-color: #F0FAF6;
-            border-left: 5px solid #00875A;
+            border: 1px solid #B3F5D6;
             display: block;
         }
 
         #resultadosDiv.error {
             background-color: #FFF4F2;
-            border-left: 5px solid #DE350B;
+            border: 1px solid #FFBDAD;
             text-align: center;
             display: block;
         }
@@ -132,16 +136,22 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            font-size: 18px;
         }
+        
+        .success h3 { color: #006644; }
+        .error h3 { color: #BF2600; }
         
         .resultado-item {
-            margin-bottom: 8px;
+            margin-bottom: 10px;
+            padding-left: 5px;
+            border-left: 2px solid #DFE1E6;
         }
         
-        /* Estilos para el ícono de carga (spinner) */
+        /* Ícono de carga (spinner) */
         .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #004A66;
+            border: 4px solid #DFE1E6;
+            border-top: 4px solid #0052CC;
             border-radius: 50%;
             width: 30px;
             height: 30px;
@@ -153,26 +163,54 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        /* Pie de página */
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        .footer img {
+            max-height: 40px;
+            opacity: 0.7;
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <div class="header">
-            <img src="https://media.licdn.com/dms/image/D4E0BAQGv3L2y6zH9NQ/company-logo_200_200/0/1693233827170/uace_unal_logo?e=1733539200&v=beta&t=Hh1P8_Dlk4h52o_BwVnC3Zf78_D-L48uYj-e7iW_d-I" alt="Logo UACE">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/UNAL_Logosimbolo.svg/1200px-UNAL_Logosimbolo.svg.png" alt="Logo UNAL">
-        </div>
+        <!-- =================================================================== -->
+        <!-- == IMAGEN DE ENCABEZADO (OPCIONAL)                           == -->
+        <!-- Sube una imagen de cabecera a tu carpeta 'assets' en GitHub   -->
+        <!-- y reemplaza 'URL_DE_TU_IMAGEN_DE_CABECERA.png' con la ruta     -->
+        <!-- relativa, por ejemplo: 'assets/header.png'                    -->
+        <!-- =================================================================== -->
+        <!-- <img class="header-image" src="assets/logo_uace.png" alt="Encabezado UACE"> -->
 
         <h2>Sistema de Verificación de Certificados</h2>
-        <p>Ingrese el código de verificación único (hash) que se encuentra en el documento para confirmar su autenticidad y los datos asociados.</p>
+        <p class="subtitle">Esta herramienta confirma la autenticidad de los certificados emitidos por la Unidad de Análisis en Ciencias Económicas. Ingrese el código de verificación para validar el documento.</p>
         
         <div class="input-group">
-            <input type="text" id="hashInput" placeholder="Pegue el código de verificación aquí...">
+            <input type="text" id="hashInput" placeholder="Código de Verificación Único (Hash)">
             <button onclick="verificarCertificado()">Verificar Autenticidad</button>
         </div>
 
         <div id="resultadosDiv">
-            </div>
+            <!-- El resultado de la verificación aparecerá aquí -->
+        </div>
+
+        <div class="footer">
+            <!-- =================================================================== -->
+            <!-- == LOGOS DEL PIE DE PÁGINA                                     == -->
+            <!-- Sube los logos a tu carpeta 'assets' en GitHub y reemplaza  -->
+            <!-- las rutas. Ejemplo: 'assets/logo-uace.png'                  -->
+            <!-- =================================================================== -->
+            <img src="assets/logo_fce_alta_azul.png" alt="Logo FCE">
+            <img src="assets/logo_unal.png" alt="Logo UNAL">
+        </div>
     </div>
 
     <script>
@@ -180,18 +218,19 @@
             const hash = document.getElementById('hashInput').value.trim();
             const resultadosDiv = document.getElementById('resultadosDiv');
 
-            // 1. Mostrar el spinner de carga y limpiar resultados anteriores.
+            // 1. Mostrar el spinner de carga.
             resultadosDiv.className = 'loading';
             resultadosDiv.innerHTML = '<div class="spinner"></div>';
             
             if (!hash) {
                 resultadosDiv.className = 'error';
-                resultadosDiv.innerHTML = '<h3>Por favor, ingrese un código de verificación.</h3>';
+                resultadosDiv.innerHTML = '<h3>Campo Vacío</h3><p>Es necesario ingresar un código de verificación.</p>';
                 return;
             }
 
             // ===================================================================
-            // == IMPORTANTE: AQUÍ DEBE IR LA URL DE PRODUCCIÓN DE TU WEBHOOK N8N ==
+            // == IMPORTANTE: URL DE PRODUCCIÓN DE TU WEBHOOK N8N             ==
+            // Esta es la dirección a la que tu página web enviará el hash. ==
             // ===================================================================
             const webhookURL = 'https://n8n-uace.app.n8n.cloud/webhook/73bd1d22-da12-486f-806e-e6f79842fb40';
             // ===================================================================
@@ -211,29 +250,29 @@
 
                 // 5. Revisar el campo "status" que envía n8n.
                 if (data.status === 'valido') {
-                    // Si el certificado es válido, se construye el HTML con toda la información.
+                    // Si el certificado es válido, construye el HTML con toda la información.
                     resultadosDiv.className = 'success';
                     resultadosDiv.innerHTML = `
                         <h3>
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: #00875A;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="currentColor"></path></svg>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: #006644;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="currentColor"></path></svg>
                             Certificado Válido y Verificado
                         </h3>
-                        <p class="resultado-item"><strong>Estudiante:</strong> ${data.info.nombreCompleto}</p>
-                        <p class="resultado-item"><strong>Documento:</strong> ${data.info.documentoID}</p>
-                        <p class="resultado-item"><strong>Programa Académico:</strong> ${data.info.programa}</p>
-                        <p class="resultado-item"><strong>Curso Aprobado:</strong> ${data.info.nombreCurso}</p>
-                        <p class="resultado-item"><strong>Fecha de Emisión:</strong> ${new Date(data.info.fechaEmision).toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                        <div class="resultado-item"><strong>Estudiante:</strong> ${data.info.nombreCompleto || 'No disponible'}</div>
+                        <div class="resultado-item"><strong>Documento:</strong> ${data.info.documentoID || 'No disponible'}</div>
+                        <div class="resultado-item"><strong>Programa Académico:</strong> ${data.info.programa || 'No disponible'}</div>
+                        <div class="resultado-item"><strong>Curso Aprobado:</strong> ${data.info.nombreCurso || 'No disponible'}</div>
+                        <div class="resultado-item"><strong>Fecha de Emisión:</strong> ${new Date(data.info.fechaEmision).toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
                     `;
                 } else {
-                    // Si el status es "invalido", se muestra el mensaje de error.
+                    // Si el status es "invalido", muestra el mensaje de error profesional.
                     resultadosDiv.className = 'error';
-                    resultadosDiv.innerHTML = `<h3>❌ Certificado No Encontrado</h3><p>El código de verificación no coincide con ningún registro en nuestra base de datos. Por favor, verifíquelo e intente de nuevo.</p>`;
+                    resultadosDiv.innerHTML = `<h3>❌ Verificación Fallida</h3><p>El código ingresado no coincide con ningún certificado emitido y validado en nuestra base de datos. Por favor, verifique el código e intente de nuevo. Si el problema persiste, contacte a la unidad.</p>`;
                 }
             } catch (error) {
-                // 6. Si la conexión falla, se muestra un error genérico.
+                // 6. Si la conexión falla, muestra un error genérico.
                 console.error('Error en la verificación:', error);
                 resultadosDiv.className = 'error';
-                resultadosDiv.innerHTML = `<h3>Ocurrió un error de conexión</h3><p>No se pudo establecer comunicación con el servidor de verificación. Por favor, revise su conexión a internet e intente más tarde.</p>`;
+                resultadosDiv.innerHTML = `<h3>Error de Conexión</h3><p>No se pudo establecer comunicación con el servidor de verificación. Por favor, revise su conexión a internet e intente de nuevo en unos momentos.</p>`;
             }
         }
     </script>
