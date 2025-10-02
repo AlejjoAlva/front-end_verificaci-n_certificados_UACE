@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -164,36 +164,27 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Pie de página */
+        /* =================================================================== */
+        /* == INICIO DE CAMBIOS PARA RESPONSIVIDAD DEL FOOTER             == */
+        /* =================================================================== */
         .footer {
-            margin-top: 80px;
+            margin-top: 90px;
             padding-top: 20px;
             border-top: 1px solid #e0e0e0;
             display: flex;
-            /* =================================================================== */
-            /* == INICIO DE CAMBIOS PARA RESPONSIVIDAD DEL FOOTER             == */
-            /* =================================================================== */
-            flex-direction: column; /* Por defecto, apilados verticalmente para móviles */
+            flex-direction: column; /* Apilados verticalmente por defecto */
             gap: 20px; /* Espacio entre los logos apilados */
-            /* =================================================================== */
+            align-items: center; /* Centramos los logos */
         }
+        /* =================================================================== */
+
         .footer img {
-            max-height: 80px;
+            max-height: 90px;
             opacity: 0.7;
         }
 
-        /* Media Query para pantallas más grandes (computadores) */
-        @media (min-width: 600px) {
-            .footer {
-                flex-direction: row; /* En pantallas grandes, se ponen de lado */
-                justify-content: space-around; /* Se distribuyen en el espacio */
-                gap: 0; /* Quitamos el espacio vertical */
-            }
-        }
-        /* =================================================================== */
-        /* == FIN DE CAMBIOS PARA RESPONSIVIDAD DEL FOOTER                == */
-        /* =================================================================== */
-
+        /* Se elimina la Media Query anterior para que el comportamiento sea el mismo en todas las pantallas */
+        
     </style>
 </head>
 <body>
@@ -215,8 +206,8 @@
         </div>
 
         <div class="footer">
-            <img src="logo_fce_alta_azul.png" alt="Logo FCE">
-            <img src="unal_1.png" alt="Logo UNAL">
+            <img src="unal_1.png" alt="Logo FCE">
+            <img src="logo_fce_alta_azul.png" alt="Logo UNAL">
             <img src="logo_uace.png" alt="Logo UACE">
         </div>
     </div>
