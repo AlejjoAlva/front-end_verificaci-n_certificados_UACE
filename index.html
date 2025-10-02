@@ -252,6 +252,7 @@
                             <div class="resultado-item"><strong>Documento:</strong> ${data.info.documentoID || 'No disponible'}</div>
                             <div class="resultado-item"><strong>Programa Académico:</strong> ${data.info.programa || 'No disponible'}</div>
                             <div class="resultado-item"><strong>Curso Aprobado:</strong> ${data.info.nombreCurso || 'No disponible'}</div>
+                            <div class="resultado-item"><strong>Intensidad Horaria:</strong> ${data.info.intensidadHoraria || 'No disponible'}</div>
                             <div class="resultado-item"><strong>Fecha de Emisión:</strong> ${new Date(data.info.fechaEmision).toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
                         `;
                     } else {
