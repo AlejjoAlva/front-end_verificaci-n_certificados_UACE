@@ -276,7 +276,11 @@
                 // == INICIO DE CAMBIO DE MENSAJE DE ERROR "FALLA DE CONEXIÓN"     ==
                 // ===================================================================
                 resultadosDiv.className = 'error';
-                resultadosDiv.innerHTML = `<h3>Error en la Verificación</h3><p>No se pudo completar la consulta en este momento. Esto puede deberse a un problema de conexión o a un error temporal del servidor. Por favor, intente de nuevo en unos momentos.</p>`;
+                resultadosDiv.innerHTML = `
+                //<h3>Error en la Verificación</h3><p>No se pudo completar la consulta en este momento. Esto puede deberse a un problema de conexión o a un error temporal del servidor. Por favor, intente de nuevo en unos momentos.</p>
+                <h3>❌ Verificación Fallida</h3><p>El código ingresado no coincide con ningún certificado emitido y validado en nuestra base de datos. Por favor, verifique el código e intente de nuevo.</p>
+                `;
+                
                 // ===================================================================
                 // == FIN DE CAMBIO DE MENSAJE DE ERROR                         ==
                 // ===================================================================
