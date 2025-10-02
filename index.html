@@ -21,7 +21,7 @@
             padding: 20px;
             box-sizing: border-box;
             /* Opcional: Imagen de fondo con figuras geométricas sutiles */
-            /* background-image: url('URL_A_TU_IMAGEN_DE_FONDO.svg'); 
+            /* background-image: url('assets/background.svg'); 
             background-size: cover;
             */
         }
@@ -170,25 +170,37 @@
             padding-top: 20px;
             border-top: 1px solid #e0e0e0;
             display: flex;
-            justify-content: space-around;
-            align-items: center;
+            /* =================================================================== */
+            /* == INICIO DE CAMBIOS PARA RESPONSIVIDAD DEL FOOTER             == */
+            /* =================================================================== */
+            flex-direction: column; /* Por defecto, apilados verticalmente para móviles */
+            gap: 20px; /* Espacio entre los logos apilados */
+            /* =================================================================== */
         }
         .footer img {
             max-height: 40px;
             opacity: 0.7;
         }
+
+        /* Media Query para pantallas más grandes (computadores) */
+        @media (min-width: 600px) {
+            .footer {
+                flex-direction: row; /* En pantallas grandes, se ponen de lado */
+                justify-content: space-around; /* Se distribuyen en el espacio */
+                gap: 0; /* Quitamos el espacio vertical */
+            }
+        }
+        /* =================================================================== */
+        /* == FIN DE CAMBIOS PARA RESPONSIVIDAD DEL FOOTER                == */
+        /* =================================================================== */
+
     </style>
 </head>
 <body>
 
     <div class="container">
-        <!-- =================================================================== -->
-        <!-- == IMAGEN DE ENCABEZADO (OPCIONAL)                           == -->
-        <!-- Sube una imagen de cabecera a tu carpeta 'assets' en GitHub   -->
-        <!-- y reemplaza 'URL_DE_TU_IMAGEN_DE_CABECERA.png' con la ruta     -->
-        <!-- relativa, por ejemplo: 'assets/header.png'                    -->
-        <!-- =================================================================== -->
-        <!-- <img class="header-image" src="logo_uace.png" alt="Encabezado UACE"> -->
+        <!-- Puedes descomentar esta línea y poner una imagen de cabecera si lo deseas -->
+        <!-- <img class="header-image" src="assets/header.png" alt="Encabezado UACE"> -->
 
         <h2>Sistema de Verificación de Certificados</h2>
         <p class="subtitle">Esta herramienta confirma la autenticidad de los certificados emitidos por la Unidad de Análisis en Ciencias Económicas. Ingrese el código de verificación para validar el documento.</p>
@@ -203,14 +215,14 @@
         </div>
 
         <div class="footer">
-            <!-- =================================================================== -->
-            <!-- == LOGOS DEL PIE DE PÁGINA                                     == -->
-            <!-- Sube los logos a tu carpeta 'assets' en GitHub y reemplaza  -->
-            <!-- las rutas. Ejemplo: 'assets/logo-uace.png'                  -->
-            <!-- =================================================================== -->
+            <!-- =================================================================== */
+            /* == NOTA SOBRE IMÁGENES                                         == */
+            /* Sube los logos a una carpeta 'assets' en GitHub y reemplaza   */
+            /* las rutas. Ejemplo: 'assets/logo-uace.png'                   */
+            /* =================================================================== */
             <img src="logo_fce_alta_azul.png" alt="Logo FCE">
             <img src="logo_unal.png" alt="Logo UNAL">
-            <img src="logo_uace.png" alt="Logo UNAL">
+            <img src="logo_uace.png" alt="Logo UACE">
         </div>
     </div>
 
@@ -219,7 +231,6 @@
             const hash = document.getElementById('hashInput').value.trim();
             const resultadosDiv = document.getElementById('resultadosDiv');
 
-            // 1. Mostrar el spinner de carga.
             resultadosDiv.className = 'loading';
             resultadosDiv.innerHTML = '<div class="spinner"></div>';
             
@@ -231,49 +242,52 @@
 
             // ===================================================================
             // == IMPORTANTE: URL DE PRODUCCIÓN DE TU WEBHOOK N8N             ==
-            // Esta es la dirección a la que tu página web enviará el hash. ==
             // ===================================================================
             const webhookURL = 'https://n8n-uace.app.n8n.cloud/webhook/73bd1d22-da12-486f-806e-e6f79842fb40';
-            // ===================================================================
             
-            // 2. Construir la URL completa para la petición.
             const fullURL = `${webhookURL}?hash=${encodeURIComponent(hash)}`;
 
             try {
-                // 3. Enviar la petición al webhook de n8n.
                 const response = await fetch(fullURL);
-                if (!response.ok) {
-                    throw new Error('Error en la respuesta del servidor.');
-                }
                 
-                // 4. Convertir la respuesta a formato JSON.
-                const data = await response.json();
+                // Si la comunicación con el servidor fue exitosa (recibimos una respuesta)...
+                if (response.ok) {
+                    const data = await response.json();
 
-                // 5. Revisar el campo "status" que envía n8n.
-                if (data.status === 'valido') {
-                    // Si el certificado es válido, construye el HTML con toda la información.
-                    resultadosDiv.className = 'success';
-                    resultadosDiv.innerHTML = `
-                        <h3>
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: #006644;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="currentColor"></path></svg>
-                            Certificado Válido y Verificado
-                        </h3>
-                        <div class="resultado-item"><strong>Estudiante:</strong> ${data.info.nombreCompleto || 'No disponible'}</div>
-                        <div class="resultado-item"><strong>Documento:</strong> ${data.info.documentoID || 'No disponible'}</div>
-                        <div class="resultado-item"><strong>Programa Académico:</strong> ${data.info.programa || 'No disponible'}</div>
-                        <div class="resultado-item"><strong>Curso Aprobado:</strong> ${data.info.nombreCurso || 'No disponible'}</div>
-                        <div class="resultado-item"><strong>Fecha de Emisión:</strong> ${new Date(data.info.fechaEmision).toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
-                    `;
+                    // Y si n8n nos dice que el certificado es válido...
+                    if (data.status === 'valido') {
+                        resultadosDiv.className = 'success';
+                        resultadosDiv.innerHTML = `
+                            <h3>
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: #006644;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="currentColor"></path></svg>
+                                Certificado Válido y Verificado
+                            </h3>
+                            <div class="resultado-item"><strong>Estudiante:</strong> ${data.info.nombreCompleto || 'No disponible'}</div>
+                            <div class="resultado-item"><strong>Documento:</strong> ${data.info.documentoID || 'No disponible'}</div>
+                            <div class="resultado-item"><strong>Programa Académico:</strong> ${data.info.programa || 'No disponible'}</div>
+                            <div class="resultado-item"><strong>Curso Aprobado:</strong> ${data.info.nombreCurso || 'No disponible'}</div>
+                            <div class="resultado-item"><strong>Fecha de Emisión:</strong> ${new Date(data.info.fechaEmision).toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
+                        `;
+                    } else {
+                        // Si n8n nos dice que el certificado NO es válido (status: "invalido").
+                        resultadosDiv.className = 'error';
+                        resultadosDiv.innerHTML = `<h3>❌ Verificación Fallida</h3><p>El código ingresado no coincide con ningún certificado emitido y validado en nuestra base de datos. Por favor, verifique el código e intente de nuevo.</p>`;
+                    }
                 } else {
-                    // Si el status es "invalido", muestra el mensaje de error profesional.
-                    resultadosDiv.className = 'error';
-                    resultadosDiv.innerHTML = `<h3>❌ Verificación Fallida</h3><p>El código ingresado no coincide con ningún certificado emitido y validado en nuestra base de datos. Por favor, verifique el código e intente de nuevo. Si el problema persiste, contacte a la unidad.</p>`;
+                    // Si el servidor responde pero con un error (ej. 404, 500), el workflow puede estar fallando.
+                    throw new Error('El servidor de verificación respondió con un error.');
                 }
             } catch (error) {
-                // 6. Si la conexión falla, muestra un error genérico.
+                // Si la llamada 'fetch' falla por completo (ej. no hay internet o CORS).
                 console.error('Error en la verificación:', error);
                 resultadosDiv.className = 'error';
-                resultadosDiv.innerHTML = `<h3>Error de Conexión</h3><p>No se pudo establecer comunicación con el servidor de verificación. Por favor, revise su conexión a internet e intente de nuevo en unos momentos.</p>`;
+                // ===================================================================
+                // == INICIO DE CAMBIO DE MENSAJE DE ERROR                      ==
+                // ===================================================================
+                resultadosDiv.innerHTML = `<h3>Error en la Verificación</h3><p>No se pudo completar la consulta en este momento. Esto puede deberse a un problema de conexión o a un error temporal del servidor. Por favor, intente de nuevo en unos momentos.</p>`;
+                // ===================================================================
+                // == FIN DE CAMBIO DE MENSAJE DE ERROR                         ==
+                // ===================================================================
             }
         }
     </script>
