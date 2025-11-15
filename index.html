@@ -286,7 +286,34 @@
                 // ===================================================================
             }
         }
-    </script>
+        /* === INICIO: CÓDIGO PARA LEER HASH DESDE URL === */
+
+// Espera a que toda la página (HTML, CSS, etc.) se cargue
+window.addEventListener('load', () => {
+    
+    // 1. Crea un objeto para leer los parámetros de la URL actual
+    const params = new URLSearchParams(window.location.search);
+    
+    // 2. Busca un parámetro llamado 'codigo'.
+    // (Si tu URL es ...?codigo=HASH123, esto lo capturará)
+    const codigoFromURL = params.get('codigo');
+    
+    // 3. Si SÍ encontramos un 'codigo' en la URL...
+    if (codigoFromURL) {
+        // 4. Escribimos ese código en el campo de texto
+        document.getElementById('hashInput').value = codigoFromURL;
+        
+        // 5. Llamamos a la función de verificar automáticamente
+        // (Es como si el usuario hubiera presionado el botón)
+        verificarCertificado();
+    }
+});
+
+/* === FIN: CÓDIGO PARA LEER HASH DESDE URL === */
+
+
+// Tu etiqueta de cierre de script
+</script>
 
 </body>
 </html>
