@@ -20,10 +20,6 @@
             margin: 0;
             padding: 20px;
             box-sizing: border-box;
-            /* Opcional: Imagen de fondo con figuras geométricas sutiles */
-            /* background-image: url('assets/background.svg'); 
-            background-size: cover;
-            */
         }
 
         /* Contenedor principal */
@@ -164,37 +160,29 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* =================================================================== */
-        /* == INICIO DE CAMBIOS PARA RESPONSIVIDAD DEL FOOTER             == */
-        /* =================================================================== */
+        /* Footer */
         .footer {
             margin-top: 40px;
             padding-top: 20px;
             border-top: 1px solid #e0e0e0;
             display: flex;
-            flex-direction: column; /* Apilados verticalmente por defecto */
-            gap: 20px; /* Espacio entre los logos apilados */
-            align-items: center; /* Centramos los logos */
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
         }
-        /* =================================================================== */
 
         .footer img {
             max-height: 90px;
             opacity: 0.7;
         }
-
-        /* Se elimina la Media Query anterior para que el comportamiento sea el mismo en todas las pantallas */
         
     </style>
 </head>
 <body>
 
     <div class="container">
-        <!-- Puedes descomentar esta línea y poner una imagen de cabecera si lo deseas -->
-        <!-- <img class="header-image" src="assets/header.png" alt="Encabezado UACE"> -->
-
         <h2>Sistema de Verificación de Certificados</h2>
-        <p class="subtitle">Esta herramienta confirma la autenticidad de los certificados emitidos por la <strong>Unidad de Análisis en Ciencias Económicas</strong>, semillero oficial de la <strong>Facultad de Ciencias Económicas</strong> de la <strong>Universidad Nacional de Colombia</strong>. Ingrese el <strong>código de verificación</strong> para <strong>validar</strong> el certificado.</p>
+        <p class="subtitle">Esta herramienta confirma la autenticidad de los certificados emitidos por la <strong>Unidad de Análisis en Ciencias Económicas</strong>. Ingrese el <strong>código de verificación</strong> o escanee el QR del certificado.</p>
         
         <div class="input-group">
             <input type="text" id="hashInput" placeholder="Código de Verificación Único (Hash)">
@@ -202,8 +190,7 @@
         </div>
 
         <div id="resultadosDiv">
-            <!-- El resultado de la verificación aparecerá aquí -->
-        </div>
+            </div>
 
         <div class="footer">
             <img src="unal_1.png" alt="Logo FCE">
@@ -213,8 +200,25 @@
     </div>
 
     <script>
+        // ===================================================================
+        // == 1. DETECCIÓN AUTOMÁTICA DE PARÁMETROS URL (PARA QRs)          ==
+        // ===================================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            // Buscamos si existe el parámetro "?hash=" en la URL
+            const params = new URLSearchParams(window.location.search);
+            const hashFromUrl = params.get('hash');
+
+            if (hashFromUrl) {
+                // Si existe, lo ponemos en el input automáticamente
+                document.getElementById('hashInput').value = hashFromUrl;
+                // Y ejecutamos la función de verificación inmediatamente
+                verificarCertificado();
+            }
+        });
+
         async function verificarCertificado() {
-            const hash = document.getElementById('hashInput').value.trim();
+            const hashInput = document.getElementById('hashInput');
+            const hash = hashInput.value.trim();
             const resultadosDiv = document.getElementById('resultadosDiv');
 
             resultadosDiv.className = 'loading';
@@ -227,7 +231,14 @@
             }
 
             // ===================================================================
-            // == IMPORTANTE: URL DE PRODUCCIÓN DE TU WEBHOOK N8N             ==
+            // == 2. ACTUALIZACIÓN DE URL (PARA QUE LA CONSULTA SEA COMPARTIBLE) =
+            // ===================================================================
+            // Esto cambia la URL del navegador a "?hash=CODIGO" sin recargar la página
+            const newUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}?hash=${encodeURIComponent(hash)}`;
+            window.history.pushState({ path: newUrl }, '', newUrl);
+
+            // ===================================================================
+            // == URL DE PRODUCCIÓN DE TU WEBHOOK N8N                           ==
             // ===================================================================
             const webhookURL = 'https://elaborada.app.n8n.cloud/webhook/73bd1d22-da12-486f-806e-e6f79842fb40';
             
@@ -236,11 +247,9 @@
             try {
                 const response = await fetch(fullURL);
                 
-                // Si la comunicación con el servidor fue exitosa (recibimos una respuesta)...
                 if (response.ok) {
                     const data = await response.json();
 
-                    // Y si n8n nos dice que el certificado es válido...
                     if (data.status === 'valido') {
                         resultadosDiv.className = 'success';
                         resultadosDiv.innerHTML = `
@@ -256,34 +265,18 @@
                             <div class="resultado-item"><strong>Fecha de Emisión:</strong> ${new Date(data.info.fechaEmision).toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
                         `;
                     } else {
-                        // Si n8n nos dice que el certificado NO es válido (status: "invalido").
-                        // ===================================================================
-                        // == INICIO DE CAMBIO DE MENSAJE DE ERROR "NO ENCONTRADO"        ==
-                        // ===================================================================
+                        // Mensaje unificado de error (no encontrado)
                         resultadosDiv.className = 'error';
                         resultadosDiv.innerHTML = `<h3>❌ Verificación Fallida</h3><p>El código ingresado no coincide con ningún certificado emitido y validado en nuestra base de datos. Por favor, verifique el código e intente de nuevo.</p>`;
-                        // ===================================================================
-                        // == FIN DE CAMBIO DE MENSAJE DE ERROR                           ==
-                        // ===================================================================
                     }
                 } else {
-                    // Si el servidor responde pero con un error (ej. 404, 500), el workflow puede estar fallando.
                     throw new Error('El servidor de verificación respondió con un error.');
                 }
             } catch (error) {
-                // Si la llamada 'fetch' falla por completo (ej. no hay internet o CORS).
                 console.error('Error en la verificación:', error);
-                // ===================================================================
-                // == INICIO DE CAMBIO DE MENSAJE DE ERROR "FALLA DE CONEXIÓN"     ==
-                // ===================================================================
+                // Mensaje unificado de error (falla técnica)
                 resultadosDiv.className = 'error';
-                resultadosDiv.innerHTML = 
-                    //<h3>Error en la Verificación</h3><p>No se pudo completar la consulta en este momento. Esto puede deberse a un problema de conexión o a un error temporal del servidor. Por favor, intente de nuevo en unos momentos.</p>
-                    `<h3>❌ Verificación Fallida</h3><p>El código ingresado no coincide con ningún certificado emitido y validado en nuestra base de datos. Por favor, verifique el código e intente de nuevo.</p>`;
-                
-                // ===================================================================
-                // == FIN DE CAMBIO DE MENSAJE DE ERROR                         ==
-                // ===================================================================
+                resultadosDiv.innerHTML = `<h3>❌ Verificación Fallida</h3><p>El código ingresado no coincide con ningún certificado emitido y validado en nuestra base de datos. Por favor, verifique el código e intente de nuevo.</p>`;
             }
         }
     </script>
